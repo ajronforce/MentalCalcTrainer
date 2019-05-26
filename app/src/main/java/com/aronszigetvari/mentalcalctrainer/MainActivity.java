@@ -15,10 +15,16 @@ public class MainActivity extends AppCompatActivity {
     private EditText product;
     private TextView counter;
     private TextView previousProblem;
+    private final String INDICATOR_TEXT = "Problems solved: ";
     private boolean isCorrect;
     private int solvedProblems;
     private int maxFactor;
     private MultiplicationProblem multiplicationProblem;
+
+    //Fields need to be saved when rotating the device
+    private final String PREVIOUS_PROBLEM = "previousProblem";
+    private final String SOLVED_PROBLEMS_COUNT = "solvedProblems";
+    private final String CURRENT_PROBLEM = "multiplicationProblem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         factorOne.setText("");
         factorTwo.setText("");
         product.setText("");
-        final String INDICATOR_TEXT = "Problems solved: ";
         counter.setText("");
         previousProblem.setText("");
         maxFactor = 99;
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
         factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
         solvedProblems = 0;
-        counter.setText(INDICATOR_TEXT + solvedProblems);
+        counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
 
         //Set 'digit' buttons -> if they are pressed, the app checks whether the correct result is typed in
         Button button0 = (Button) findViewById(R.id.button0);
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
                     factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
                     product.setText("");
-                    counter.setText(INDICATOR_TEXT + solvedProblems);
+                    counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
                 }
             }
         };
@@ -129,5 +134,25 @@ public class MainActivity extends AppCompatActivity {
         };
 
         changeLevel.setOnClickListener(changeLevelIsPressed);
+    }
+
+//------------------------------------------
+    //Dealing with rotation of the device
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(PREVIOUS_PROBLEM, previousProblem.getText().toString());
+        outState.putInt(SOLVED_PROBLEMS_COUNT, solvedProblems);
+        outState.putString(CURRENT_PROBLEM, multiplicationProblem.save());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        previousProblem.setText(savedInstanceState.getString(PREVIOUS_PROBLEM));
+        solvedProblems = savedInstanceState.getInt(SOLVED_PROBLEMS_COUNT);
+        counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
+        multiplicationProblem.load(savedInstanceState.getString(CURRENT_PROBLEM));
     }
 }

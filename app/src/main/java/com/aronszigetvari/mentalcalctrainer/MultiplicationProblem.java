@@ -4,7 +4,7 @@ public class MultiplicationProblem {
 
     private int factorOne;
     private int factorTwo;
-    private int product;
+    private long product;
 
     public MultiplicationProblem(int maxFactor) {
 
@@ -12,12 +12,12 @@ public class MultiplicationProblem {
             maxFactor = 9999;
         }
 
-        int szorzo1 = (int) (Math.random()*maxFactor) + 1;
-        int szorzo2 = (int) (Math.random()*maxFactor) + 1;
+        int factorOne = (int) (Math.random()*maxFactor) + 1;
+        int factorTwo = (int) (Math.random()*maxFactor) + 1;
 
-        this.factorOne = szorzo1;
-        this.factorTwo = szorzo2;
-        this.product = szorzo1*szorzo2;
+        this.factorOne = factorOne;
+        this.factorTwo = factorTwo;
+        this.product = factorOne*factorTwo;
     }
 
     public int getFactorOne() {
@@ -28,7 +28,18 @@ public class MultiplicationProblem {
         return factorTwo;
     }
 
-    public int getProduct() {
+    public long getProduct() {
         return product;
+    }
+
+    public String save() {
+        return (Integer.toString(factorOne) + ";" + Integer.toString(factorTwo) + ";" + Long.toString(product));
+    }
+
+    public void load(String contents) {
+        String[] fields = contents.split(";");
+        factorOne = Integer.parseInt(fields[0]);
+        factorTwo = Integer.parseInt(fields[1]);
+        product = Long.parseLong(fields[2]);
     }
 }

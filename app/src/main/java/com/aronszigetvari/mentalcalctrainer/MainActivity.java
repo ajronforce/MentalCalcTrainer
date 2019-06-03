@@ -1,7 +1,11 @@
 package com.aronszigetvari.mentalcalctrainer;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     private final String SOLVED_PROBLEMS_COUNT = "solvedProblems";
     private final String CURRENT_PROBLEM = "multiplicationProblem";
 
+    //Information to store on the internal storage
+    private final String SOLVED_PROBLEMS_COUNT_FILE = "solvedProblems";
+    private final String LAST_PROBLEM_FILE = "lastProblem";
+    private final String LEVEL_FILE = "maxFactor";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +52,22 @@ public class MainActivity extends AppCompatActivity {
         product.setText("");
         counter.setText("");
         previousProblem.setText("");
+        //Create first multiplication problem
         maxFactor = 99;
-
-        //Create the first multiplication problem
         multiplicationProblem = new MultiplicationProblem(maxFactor);
+
+        //Check if SharedPreferences, i.e. saved state exists, and load that, overwrite the initialized multiplication problem
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        solvedProblems = sharedPref.getInt(SOLVED_PROBLEMS_COUNT_FILE,0);
+        String savedProblem = sharedPref.getString(LAST_PROBLEM_FILE, null);
+        if(null != savedProblem) {
+            multiplicationProblem.load(savedProblem);
+        }
+        maxFactor = sharedPref.getInt(LEVEL_FILE,99);
+
+        //Display the first or the loaded multiplication problem
         factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
         factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
-        solvedProblems = 0;
         counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
 
         //Set 'digit' buttons -> if they are pressed, the app checks whether the correct result is typed in
@@ -154,5 +172,26 @@ public class MainActivity extends AppCompatActivity {
         solvedProblems = savedInstanceState.getInt(SOLVED_PROBLEMS_COUNT);
         counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
         multiplicationProblem.load(savedInstanceState.getString(CURRENT_PROBLEM));
+    }
+
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+
+        //write current state to a SharedPreferences file
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(SOLVED_PROBLEMS_COUNT_FILE,solvedProblems);
+        editor.putString(LAST_PROBLEM_FILE,multiplicationProblem.save());
+        editor.putInt(LEVEL_FILE,maxFactor);
+        editor.apply();
+
+        super.onPause();
     }
 }

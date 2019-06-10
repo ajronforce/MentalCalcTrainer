@@ -1,11 +1,9 @@
 package com.aronszigetvari.mentalcalctrainer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     //Information to store on the internal storage
     private final String SOLVED_PROBLEMS_COUNT_FILE = "solvedProblems";
-    private final String LAST_PROBLEM_FILE = "lastProblem";
+    private final String CURRENT_PROBLEM_FILE = "currentProblem";
     private final String LEVEL_FILE = "maxFactor";
+    private final String PREVIOUS_PROBLEM_TEXT_FILE = "previousProblem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +58,13 @@ public class MainActivity extends AppCompatActivity {
         //Check if SharedPreferences, i.e. saved state exists, and load that, overwrite the initialized multiplication problem
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         solvedProblems = sharedPref.getInt(SOLVED_PROBLEMS_COUNT_FILE,0);
-        String savedProblem = sharedPref.getString(LAST_PROBLEM_FILE, null);
+        String savedProblem = sharedPref.getString(CURRENT_PROBLEM_FILE, null);
         if(null != savedProblem) {
             multiplicationProblem.load(savedProblem);
+        }
+        String previousProblemText = sharedPref.getString(PREVIOUS_PROBLEM_TEXT_FILE, null  );
+        if(null != previousProblemText) {
+            previousProblem.setText(previousProblemText);
         }
         maxFactor = sharedPref.getInt(LEVEL_FILE,99);
 
@@ -188,8 +191,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(SOLVED_PROBLEMS_COUNT_FILE,solvedProblems);
-        editor.putString(LAST_PROBLEM_FILE,multiplicationProblem.save());
+        editor.putString(CURRENT_PROBLEM_FILE,multiplicationProblem.save());
         editor.putInt(LEVEL_FILE,maxFactor);
+        editor.putString(PREVIOUS_PROBLEM_TEXT_FILE, previousProblem.getText().toString());
         editor.apply();
 
         super.onPause();

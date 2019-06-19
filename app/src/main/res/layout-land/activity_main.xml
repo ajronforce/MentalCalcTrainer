@@ -5,6 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/currentProblem"
+        android:layout_width="201dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:focusable="false"
+        android:inputType="number"
+        android:minHeight="20sp"
+        android:singleLine="true"
+        android:text="Current Problem"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/resultInput"
+        app:layout_constraintEnd_toStartOf="@+id/resultInput"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/buttonChangeLevel"
         android:layout_width="48dp"
@@ -46,7 +65,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="150dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:minWidth="64dp"
         android:minHeight="64dp"
@@ -54,7 +73,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/button2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/factorOne" />
+        app:layout_constraintTop_toBottomOf="@+id/currentProblem" />
 
     <Button
         android:id="@+id/button2"
@@ -157,57 +176,27 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/button8"
         app:layout_constraintStart_toStartOf="@+id/button4" />
 
+
     <EditText
-        android:id="@+id/factorOne"
-        android:layout_width="161dp"
+        android:id="@+id/resultInput"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:focusable="false"
-        android:inputType="number"
-        android:singleLine="true"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/xSign"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <EditText
-        android:id="@+id/factorTwo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:focusable="false"
-        android:inputType="number"
-        android:singleLine="true"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/xSign"
-        app:layout_constraintEnd_toStartOf="@id/equalSign"
-        app:layout_constraintStart_toEndOf="@id/xSign" />
-
-    <EditText
-        android:id="@+id/result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:focusable="false"
         android:inputType="number"
+        android:text="Result Input"
         android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/equalSign"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/equalSign" />
+        app:layout_constraintStart_toEndOf="@+id/currentProblem2"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/indicator"
+        android:id="@+id/counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -218,37 +207,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/previous"
+        android:id="@+id/previousProblem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="Previous"
         android:textSize="10sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/indicator"
+        app:layout_constraintBaseline_toBaselineOf="@+id/counter"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/xSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="X"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/factorOne"
-        app:layout_constraintEnd_toStartOf="@+id/factorTwo"
-        app:layout_constraintStart_toEndOf="@+id/factorOne" />
-
-    <TextView
-        android:id="@+id/equalSign"
-        android:layout_width="9dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="="
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/factorTwo"
-        app:layout_constraintEnd_toStartOf="@+id/result"
-        app:layout_constraintStart_toEndOf="@+id/factorTwo" />
 
 </android.support.constraint.ConstraintLayout>

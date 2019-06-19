@@ -10,99 +10,153 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private TextView currentProblem;
+    private EditText resultInput;
 
-    private EditText factorOne;
-    private EditText factorTwo;
-    private EditText product;
+    Button button0;
+    Button button1;
+    Button button2;
+    Button button3;
+    Button button4;
+    Button button5;
+    Button button6;
+    Button button7;
+    Button button8;
+    Button button9;
+    Button buttonClear;
+    Button changeLevel;
+
     private TextView counter;
-    private TextView previousProblem;
-    private final String INDICATOR_TEXT = "Problems solved: ";
-    private boolean isCorrect;
+    private final String COUNTER_TEXT = "Problems solved: ";
     private int solvedProblems;
-    private int maxFactor;
-    private MultiplicationProblem multiplicationProblem;
+    private TextView previousProblem;
 
-    //Fields need to be saved when rotating the device
+    private boolean isCorrect;
+    private int level;
+    private Multiplication multiplication;
+
+    //Fields saved - rotating the device
     private final String PREVIOUS_PROBLEM = "previousProblem";
     private final String SOLVED_PROBLEMS_COUNT = "solvedProblems";
-    private final String CURRENT_PROBLEM = "multiplicationProblem";
+    private final String CURRENT_PROBLEM = "multiplication";
 
-    //Information to store on the internal storage
+    //Fields saved - permanent storage
     private final String SOLVED_PROBLEMS_COUNT_FILE = "solvedProblems";
     private final String CURRENT_PROBLEM_FILE = "currentProblem";
-    private final String LEVEL_FILE = "maxFactor";
+    private final String LEVEL_FILE = "level";
     private final String PREVIOUS_PROBLEM_TEXT_FILE = "previousProblem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prepareLayout();
+        setDigitKeys();
+        setFunctionKeys();
+        loadPreviousSession();
+        display();
+    }
 
-        factorOne = (EditText) findViewById(R.id.factorOne);
-        factorTwo = (EditText) findViewById(R.id.factorTwo);
-        product = (EditText) findViewById(R.id.result);
-        counter = (TextView) findViewById(R.id.indicator);
-        previousProblem = (TextView) findViewById(R.id.previous);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(PREVIOUS_PROBLEM, previousProblem.getText().toString());
+        outState.putInt(SOLVED_PROBLEMS_COUNT, solvedProblems);
+        outState.putString(CURRENT_PROBLEM, multiplication.save());
+        super.onSaveInstanceState(outState);
+    }
 
-        //Initialization
-        factorOne.setText("");
-        factorTwo.setText("");
-        product.setText("");
-        counter.setText("");
-        previousProblem.setText("");
-        //Create first multiplication problem
-        maxFactor = 99;
-        multiplicationProblem = new MultiplicationProblem(maxFactor);
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        previousProblem.setText(savedInstanceState.getString(PREVIOUS_PROBLEM));
+        solvedProblems = savedInstanceState.getInt(SOLVED_PROBLEMS_COUNT);
+        counter.setText(COUNTER_TEXT.concat(Integer.toString(solvedProblems)));
+        multiplication.load(savedInstanceState.getString(CURRENT_PROBLEM));
+    }
 
-        //Check if SharedPreferences, i.e. saved state exists, and load that, overwrite the initialized multiplication problem
+    @Override
+    protected void onPause() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(SOLVED_PROBLEMS_COUNT_FILE, solvedProblems);
+        editor.putString(CURRENT_PROBLEM_FILE, multiplication.save());
+        editor.putInt(LEVEL_FILE, level);
+        editor.putString(PREVIOUS_PROBLEM_TEXT_FILE, previousProblem.getText().toString());
+        editor.apply();
+        super.onPause();
+    }
+
+    private void loadPreviousSession() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+        level = sharedPref.getInt(LEVEL_FILE,99);
         solvedProblems = sharedPref.getInt(SOLVED_PROBLEMS_COUNT_FILE,0);
+
         String savedProblem = sharedPref.getString(CURRENT_PROBLEM_FILE, null);
         if(null != savedProblem) {
-            multiplicationProblem.load(savedProblem);
+            multiplication = new Multiplication();
+            multiplication = multiplication.load(savedProblem);
+        } else {
+            multiplication = new Multiplication(level);
         }
+
         String previousProblemText = sharedPref.getString(PREVIOUS_PROBLEM_TEXT_FILE, null  );
         if(null != previousProblemText) {
             previousProblem.setText(previousProblemText);
         }
-        maxFactor = sharedPref.getInt(LEVEL_FILE,99);
+    }
 
-        //Display the first or the loaded multiplication problem
-        factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
-        factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
-        counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
+    private void prepareLayout() {
+        currentProblem = (TextView) findViewById(R.id.currentProblem);
+        resultInput = (EditText) findViewById(R.id.resultInput);
+        counter = (TextView) findViewById(R.id.counter);
+        previousProblem = (TextView) findViewById(R.id.previousProblem);
 
-        //Set 'digit' buttons -> if they are pressed, the app checks whether the correct result is typed in
-        Button button0 = (Button) findViewById(R.id.button0);
-        Button button1 = (Button) findViewById(R.id.button1);
-        Button button2 = (Button) findViewById(R.id.button2);
-        Button button3 = (Button) findViewById(R.id.button3);
-        Button button4 = (Button) findViewById(R.id.button4);
-        Button button5 = (Button) findViewById(R.id.button5);
-        Button button6 = (Button) findViewById(R.id.button6);
-        Button button7 = (Button) findViewById(R.id.button7);
-        Button button8 = (Button) findViewById(R.id.button8);
-        Button button9 = (Button) findViewById(R.id.button9);
+        currentProblem.setText("");
+        resultInput.setText("");
+        counter.setText("");
+        previousProblem.setText("");
+    }
+
+    private void display() {
+        currentProblem.setText(multiplication.problemDisplayed);
+        resultInput.setText("");
+        counter.setText(COUNTER_TEXT.concat(Integer.toString(solvedProblems)));
+    }
+
+    private void setDigitKeys() {
+        button0 = (Button) findViewById(R.id.button0);
+        button1 = (Button) findViewById(R.id.button1);
+        button2 = (Button) findViewById(R.id.button2);
+        button3 = (Button) findViewById(R.id.button3);
+        button4 = (Button) findViewById(R.id.button4);
+        button5 = (Button) findViewById(R.id.button5);
+        button6 = (Button) findViewById(R.id.button6);
+        button7 = (Button) findViewById(R.id.button7);
+        button8 = (Button) findViewById(R.id.button8);
+        button9 = (Button) findViewById(R.id.button9);
 
         View.OnClickListener digitIsPressed = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Button b = (Button) v;
-                try {
-                    product.append(b.getText().toString());
-                    isCorrect = (Integer.valueOf(product.getText().toString()) == multiplicationProblem.getProduct());
-                } catch (NumberFormatException e) {
-                    product.setText("");
+
+                resultInput.append(b.getText().toString());
+                String input = resultInput.getText().toString();
+
+                if(input.length() > 16) {
+                    resultInput.setText("");
                 }
+                if("0".equals(input)) {
+                    resultInput.setText("");
+                }
+
+                isCorrect = multiplication.checkResult(input);
                 if (isCorrect) {
                     solvedProblems++;
-                    previousProblem.setText("("+multiplicationProblem.getFactorOne()+"x"+multiplicationProblem.getFactorTwo()+"="+multiplicationProblem.getProduct()+")");
-                    multiplicationProblem = new MultiplicationProblem(maxFactor);
-                    factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
-                    factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
-                    product.setText("");
-                    counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
+                    previousProblem.setText(multiplication.storedValue);
+                    multiplication = new Multiplication(level);
+                    display();
                 }
             }
         };
@@ -117,85 +171,31 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(digitIsPressed);
         button8.setOnClickListener(digitIsPressed);
         button9.setOnClickListener(digitIsPressed);
+    }
 
-//-----------------------------------------
-        //Set 'clear' button
-
-        Button buttonClear = (Button) findViewById(R.id.buttonClear);
-
+    private void setFunctionKeys() {
+        buttonClear = (Button) findViewById(R.id.buttonClear);
         View.OnClickListener buttonClearIsPressed = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                product.setText("");
+                resultInput.setText("");
             }
         };
-
         buttonClear.setOnClickListener(buttonClearIsPressed);
 
-//-----------------------------------------
-        //Set 'change level' button: 2-digit -> 3-digit -> 4-digit cyclical change
-
-        Button changeLevel = (Button) findViewById(R.id.buttonChangeLevel);
-
+        changeLevel = (Button) findViewById(R.id.buttonChangeLevel);
         View.OnClickListener changeLevelIsPressed = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(maxFactor == 99) {
-                    maxFactor = 999;
-                } else if(maxFactor == 999) {
-                    maxFactor = 9999;
+                if(level < 100000) {
+                    level = level * 10 + 9;
                 } else {
-                    maxFactor = 99;
+                    level = 99;
                 }
-                multiplicationProblem = new MultiplicationProblem(maxFactor);
-                factorOne.setText(Integer.toString(multiplicationProblem.getFactorOne()));
-                factorTwo.setText(Integer.toString(multiplicationProblem.getFactorTwo()));
-                product.setText("");
+                multiplication = new Multiplication(level);
+                display();
             }
         };
-
         changeLevel.setOnClickListener(changeLevelIsPressed);
-    }
-
-//------------------------------------------
-    //Dealing with rotation of the device
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(PREVIOUS_PROBLEM, previousProblem.getText().toString());
-        outState.putInt(SOLVED_PROBLEMS_COUNT, solvedProblems);
-        outState.putString(CURRENT_PROBLEM, multiplicationProblem.save());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        previousProblem.setText(savedInstanceState.getString(PREVIOUS_PROBLEM));
-        solvedProblems = savedInstanceState.getInt(SOLVED_PROBLEMS_COUNT);
-        counter.setText(INDICATOR_TEXT.concat(Integer.toString(solvedProblems)));
-        multiplicationProblem.load(savedInstanceState.getString(CURRENT_PROBLEM));
-    }
-
-    @Override
-    protected void onResume() {
-
-        super.onResume();
-
-    }
-
-    @Override
-    protected void onPause() {
-
-        //write current state to a SharedPreferences file
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(SOLVED_PROBLEMS_COUNT_FILE,solvedProblems);
-        editor.putString(CURRENT_PROBLEM_FILE,multiplicationProblem.save());
-        editor.putInt(LEVEL_FILE,maxFactor);
-        editor.putString(PREVIOUS_PROBLEM_TEXT_FILE, previousProblem.getText().toString());
-        editor.apply();
-
-        super.onPause();
     }
 }

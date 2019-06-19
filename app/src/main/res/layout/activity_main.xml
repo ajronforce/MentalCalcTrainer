@@ -132,7 +132,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/result" />
+        app:layout_constraintTop_toBottomOf="@+id/resultInput" />
 
     <Button
         android:id="@+id/button9"
@@ -146,57 +146,51 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/button8"
         app:layout_constraintStart_toEndOf="@+id/button8" />
 
-    <EditText
-        android:id="@+id/factorOne"
+    <TextView
+        android:id="@+id/currentProblem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:focusable="false"
         android:inputType="number"
+        android:minHeight="20sp"
         android:singleLine="true"
+        android:text="Current Problem"
         android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/xSign"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/resultInput"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <EditText
-        android:id="@+id/factorTwo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:focusable="false"
-        android:inputType="number"
-        android:singleLine="true"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/xSign"
-        app:layout_constraintEnd_toEndOf="@+id/result"
-        app:layout_constraintStart_toEndOf="@id/xSign" />
-
-    <EditText
-        android:id="@+id/result"
-        android:layout_width="0dp"
+        android:id="@+id/resultInput"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
         android:ems="10"
         android:focusable="false"
         android:inputType="number"
+        android:text="Result Input"
         android:textAlignment="center"
-        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/factorOne" />
+        app:layout_constraintTop_toBottomOf="@+id/currentProblem" />
 
     <TextView
-        android:id="@+id/indicator"
+        android:id="@+id/counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -212,28 +206,16 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/previous"
+        android:id="@+id/previousProblem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="16dp"
         android:text="Previous"
         android:textSize="10sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/indicator"
+        app:layout_constraintBaseline_toBaselineOf="@+id/counter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/buttonClear" />
-
-    <TextView
-        android:id="@+id/xSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="X"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/factorOne"
-        app:layout_constraintEnd_toStartOf="@id/factorTwo"
-        app:layout_constraintStart_toEndOf="@id/factorOne" />
 
 </android.support.constraint.ConstraintLayout>
